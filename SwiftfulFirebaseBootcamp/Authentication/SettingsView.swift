@@ -10,11 +10,21 @@ import SwiftUI
 @MainActor
 final class SettingsViewModel: ObservableObject {
     
+    
+    @Published var authProviders: [AuthProviderOption] = []
+    
+    func loadAuthProviders() {
+        if let providers = try? AuthenticationManager.shared.getProviders() {
+            authProviders = providers
+        }
+    }
+    
     func signOut() throws {
       try AuthenticationManager.shared.signOut()
     }
     
     func resetPassword() async throws {
+        print("func settingsViewModel.resetPassword")
         let authUser = try AuthenticationManager.shared.getAuthenticatedUser()
         
         guard let email = authUser.email else {
@@ -25,11 +35,13 @@ final class SettingsViewModel: ObservableObject {
     }
     
     func updatePassword() async throws {
+        print("func settingsViewModel.updatePassword")
         let password = "Hello123"
         try await AuthenticationManager.shared.updatePassword(password: password)
     }
     
     func updateEmail() async throws {
+        print("func settingsViewModel.updateEmail")
         let email = "hello123@gmail.com"
         try await AuthenticationManager.shared.updateEmail(email: email)
     }
@@ -56,13 +68,15 @@ struct SettingsView: View {
                     }
                 }
             }
-            emailSection
             
-
-
+            if viewModel.authProviders.contains(.email) {
+                emailSection
+            }
             
             
-
+        }
+        .onAppear {
+            viewModel.loadAuthProviders()
         }
         .navigationTitle("Settings")
     }

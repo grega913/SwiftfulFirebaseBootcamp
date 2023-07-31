@@ -14,6 +14,7 @@ final class SignInEmailViewModel: ObservableObject {
     @Published var password = ""
     
     func signUp() async throws {
+        print("func SignInEmailViewModel.signUp")
         guard !email.isEmpty, !password.isEmpty else {
             print("No email or password found!")
             return
@@ -24,6 +25,7 @@ final class SignInEmailViewModel: ObservableObject {
     }
     
     func signIn() async throws {
+        print("func SignInEmailViewModel.signIn")
         guard !email.isEmpty, !password.isEmpty else {
             print("No email or password found!")
             return
@@ -83,6 +85,7 @@ struct SignInEmailView: View {
                     .background(Color.blue)
                     .cornerRadius(10)
             }
+
             
             Spacer()
         }
