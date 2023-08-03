@@ -23,6 +23,7 @@ struct RootView: View {
 
         }
         .onAppear {
+            print("onAppear in RootView")
             let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
             self.showSignInView = authUser == nil
             

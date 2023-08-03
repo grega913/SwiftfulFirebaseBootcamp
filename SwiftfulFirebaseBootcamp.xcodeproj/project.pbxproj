@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		445802642A7B999300773DD2 /* SignInAppleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 445802632A7B999300773DD2 /* SignInAppleHelper.swift */; };
 		44AE621B2A777745003598CF /* SignInGoogleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44AE621A2A777745003598CF /* SignInGoogleHelper.swift */; };
 		44B3108F2A7641F80005A3CB /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 44B3108E2A7641F80005A3CB /* GoogleService-Info.plist */; };
 		44B310962A76A7930005A3CB /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 44B310952A76A7930005A3CB /* GoogleSignIn */; };
@@ -27,6 +28,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		445802632A7B999300773DD2 /* SignInAppleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInAppleHelper.swift; sourceTree = "<group>"; };
 		44AE621A2A777745003598CF /* SignInGoogleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInGoogleHelper.swift; sourceTree = "<group>"; };
 		44B3108E2A7641F80005A3CB /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		44B310992A76A7E10005A3CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -41,6 +43,7 @@
 		44D9F3792A71469A008156D5 /* AuthenticationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationManager.swift; sourceTree = "<group>"; };
 		44D9F37B2A714C55008156D5 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		44D9F37D2A714F76008156D5 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		44FF79332A7A97E100FBD6AB /* SwiftfulFirebaseBootcamp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SwiftfulFirebaseBootcamp.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +90,7 @@
 		44BC963D2A711ABB00156AD8 /* SwiftfulFirebaseBootcamp */ = {
 			isa = PBXGroup;
 			children = (
+				44FF79332A7A97E100FBD6AB /* SwiftfulFirebaseBootcamp.entitlements */,
 				44B310992A76A7E10005A3CB /* Info.plist */,
 				44BC963E2A711ABB00156AD8 /* SwiftfulFirebaseBootcampApp.swift */,
 				44BC96402A711ABB00156AD8 /* ContentView.swift */,
@@ -123,6 +127,7 @@
 				44D9F37D2A714F76008156D5 /* SettingsView.swift */,
 				44D9F3792A71469A008156D5 /* AuthenticationManager.swift */,
 				44AE621A2A777745003598CF /* SignInGoogleHelper.swift */,
+				445802632A7B999300773DD2 /* SignInAppleHelper.swift */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
@@ -217,6 +222,7 @@
 				44D9F3762A7124C7008156D5 /* AuthenticationView.swift in Sources */,
 				44D9F37A2A71469A008156D5 /* AuthenticationManager.swift in Sources */,
 				44B3109C2A76AC9D0005A3CB /* Utilities.swift in Sources */,
+				445802642A7B999300773DD2 /* SignInAppleHelper.swift in Sources */,
 				44D9F3782A7125C3008156D5 /* SignInEmailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -343,6 +349,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SwiftfulFirebaseBootcamp/SwiftfulFirebaseBootcamp.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SwiftfulFirebaseBootcamp/Preview Content\"";
@@ -364,6 +372,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.matchpoze.SwiftfulFirebaseBootcamp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -375,6 +384,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SwiftfulFirebaseBootcamp/SwiftfulFirebaseBootcamp.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SwiftfulFirebaseBootcamp/Preview Content\"";
@@ -396,6 +407,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.matchpoze.SwiftfulFirebaseBootcamp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
