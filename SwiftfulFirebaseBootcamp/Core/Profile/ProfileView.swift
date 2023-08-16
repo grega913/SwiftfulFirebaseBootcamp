@@ -21,7 +21,7 @@ final class ProfileViewModel: ObservableObject {
         print("func ProfileViewModel.loadCurrentUser")
      let authDataResult =  try AuthenticationManager.shared.getAuthenticatedUser()
      self.user = try await UserManager.shared.getUser(userId: authDataResult.uid)
-        print("self.user: \(self.user)")
+       
     }
     
 }

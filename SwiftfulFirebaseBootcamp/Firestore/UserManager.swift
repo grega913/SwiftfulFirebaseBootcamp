@@ -53,8 +53,6 @@ final class UserManager {
         print("func UserManager.getUser")
         let snapshot = try await Firestore.firestore().collection("users").document(userId).getDocument()
         
-  
-        
         
         guard let data = snapshot.data(), let userId = data["user_id"] as? String else {
             throw URLError(.badServerResponse)
