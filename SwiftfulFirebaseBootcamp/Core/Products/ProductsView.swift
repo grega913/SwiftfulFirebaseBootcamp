@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
 
 @MainActor
 final class ProductsViewModel: ObservableObject {
@@ -25,6 +26,7 @@ final class ProductsViewModel: ObservableObject {
 //                let productArray = products.products
 //
 //                for product in productArray {
+//                    print("Product.rating: \(String(describing: product.rating))")
 //                    try? await ProductsManager.shared.uploadProduct(product: product)
 //                }
 //
@@ -39,6 +41,7 @@ final class ProductsViewModel: ObservableObject {
     @Published private(set) var products: [Product] = []
     @Published var selectedFilter: FilterOption? = nil
     @Published var selectedCategory: CategoryOption? = nil
+    private var lastDocument: DocumentSnapshot? = nil
     
     
     
@@ -63,6 +66,8 @@ final class ProductsViewModel: ObservableObject {
     
     func filterSelected(option: FilterOption) async throws {
         self.selectedFilter = option
+        self.products = []
+        self.lastDocument = nil
         self.getProducts()
         
 //        switch option {
@@ -99,6 +104,8 @@ final class ProductsViewModel: ObservableObject {
     func categorySelected(option: CategoryOption) async throws {
         
         self.selectedCategory = option
+        self.products = []
+        self.lastDocument = nil
         self.getProducts()
         
 //        switch option {
@@ -108,17 +115,50 @@ final class ProductsViewModel: ObservableObject {
 //            self.products = try await ProductsManager.shared.getAllProductsForCategory(category: option.rawValue)
 //        }
         
-
-
-        
-       
     }
     
     func getProducts() {
+
         Task {
-            self.products = try await ProductsManager.shared.getAllProducts(priceDescending: selectedFilter?.priceDescending, forCategory: selectedCategory?.categoryKey)
+           let (newProducts, lastDocument) = try await ProductsManager.shared
+                .getAllProducts(priceDescending: selectedFilter?.priceDescending,
+                                forCategory: selectedCategory?.categoryKey,
+                                count: 10,
+                                lastDocument: lastDocument)
+            
+            self.products.append(contentsOf: newProducts)
+            
+            if let lastDocument {
+                self.lastDocument = lastDocument
+            }
+            
+            
+
         }
     }
+    
+    func getProductsCount() {
+        Task {
+            let count = try await ProductsManager.shared.getAllProductsCount()
+            print("ALL PRODUCT COUNT: \(count)")
+        }
+    }
+    
+//    func getProductsByRating() {
+//        print("getProductsByRating")
+//        Task {
+////            let newProducts = try await ProductsManager.shared.getProductsByRating(count: 3, lastRating: self.products.last?.rating)
+//
+//            let (newProducts, lastDocument) = try await ProductsManager.shared
+//                .getProductsByRating(count: 3, lastDocument: lastDocument)
+//            self.products.append(contentsOf: newProducts)
+//            self.lastDocument = lastDocument
+//
+//        }
+//
+//    }
+    
+    
     
 }
 
@@ -129,8 +169,23 @@ struct ProductsView: View {
     
     var body: some View {
         List {
+            /*
+            Button("Fetch more objects") {
+                viewModel.getProductsByRating()
+            }
+            */
+            
             ForEach(viewModel.products) { product in
                 ProductCellView(product: product)
+                
+                if product == viewModel.products.last {
+                    ProgressView()
+                        .onAppear {
+                            print("fetching more products")
+                            viewModel.getProducts()
+                        }
+                }
+                
             }
         }
             .navigationTitle("Products")
@@ -161,7 +216,9 @@ struct ProductsView: View {
             })
 
             .onAppear {
+                viewModel.getProductsCount()
                 viewModel.getProducts()
+                //viewModel.downloadProductsAndUploadToFirebase()
             }
         
         /*
