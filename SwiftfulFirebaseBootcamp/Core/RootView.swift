@@ -15,11 +15,16 @@ struct RootView: View {
         ZStack {
             
             if !showSignInView {
+                
+                TabbarView(showSignInView: $showSignInView)
+                
+                /*
                 NavigationStack {
                     //SettingsView(showSignInView: $showSignInView)
                     //ProfileView(showSignInView: $showSignInView)
                     ProductsView()
                 }
+                 */
             }
             
 

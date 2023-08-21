@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseFirestore
 import FirebaseFirestoreSwift
+import Combine
 
 
 
@@ -140,11 +141,22 @@ final class UserManager {
     }
     
     // codeble preparation
-    private let userCollection = Firestore.firestore().collection("users")
+    private let userCollection: CollectionReference = Firestore.firestore().collection("users")
     
     private func userDocument(userId: String) -> DocumentReference {
         userCollection.document(userId)
     }
+    
+    
+    
+    private func userFavoriteProductCollection(userId: String) -> CollectionReference {
+        userDocument(userId: userId).collection("favorite_products")
+    }
+    
+    private func userFavoriteProductDocument(userId: String, favoriteProductId: String) -> DocumentReference {
+        userFavoriteProductCollection(userId: userId).document(favoriteProductId)
+    }
+    
     
     
     // encoder  . . takes care of how keys from our model are mapped to firestore keys
@@ -164,6 +176,9 @@ final class UserManager {
         return decoder
         
     }()
+    
+    
+    private var userFavoriteProductsListener: ListenerRegistration? = nil
     
     
     func createNewUser(user: DBUser) async throws {
@@ -296,5 +311,139 @@ final class UserManager {
         
     }
     
+    func addUserFavoriteProduct(userId: String, productId: Int) async throws {
+        
+        let document = userFavoriteProductCollection(userId: userId).document()
+        let documentId = document.documentID
+        
+//        let data: [String: Any] = [
+//            "id": documentId,
+//            "product_id": productId,
+//            "date_created": Timestamp(),
+//        ]
+        
+        let data: [String: Any] = [
+            UserFavoriteProduct.CodingKeys.id.rawValue: documentId,
+            UserFavoriteProduct.CodingKeys.productId.rawValue: productId,
+            UserFavoriteProduct.CodingKeys.dateCreated.rawValue: Timestamp(),
+        ]
+        
+        
+        try await document
+            .setData(data, merge: false)
+        
+    }
     
+    func removeUserFavoriteProduct(userId: String, favoriteProductId: String) async throws {
+        try await userFavoriteProductDocument(userId: userId, favoriteProductId: favoriteProductId).delete()
+    }
+    
+
+    func getAllUserFavoriteProducts(userId: String) async throws -> [UserFavoriteProduct] {
+        try await userFavoriteProductCollection(userId: userId).getDocuments(as: UserFavoriteProduct.self)
+    }
+    
+    
+    
+    func removeListenerForAllUserFavoriteProducts() {
+        self.userFavoriteProductsListener?.remove()
+    }
+    
+    
+    // firebase listeners are not currently in async await, so we are using completion handler
+    func addListenerForAllUserFavoriteProducts(userId: String, completion: @escaping (_ products: [UserFavoriteProduct])->()) {
+        self.userFavoriteProductsListener =   userFavoriteProductCollection(userId: userId).addSnapshotListener { querySnapshot, error in
+            guard let documents = querySnapshot?.documents else {
+                print("No documents")
+                return
+            }
+            
+//            let products: [UserFavoriteProduct] = documents.compactMap { documentSnapshot in
+//                return try? documentSnapshot.data(as: UserFavoriteProduct.self)
+//            }
+            
+            //one liner
+            let products: [UserFavoriteProduct] = documents.compactMap({ try? $0.data(as: UserFavoriteProduct.self)})
+            
+            completion(products)
+            
+            // what changed
+            querySnapshot?.documentChanges.forEach { diff in
+                if(diff.type == .added) {
+                    print("New products: \(diff.document.data())")
+                }
+                if(diff.type == .modified) {
+                    print("Modified products: \(diff.document.data())")
+                }
+                if(diff.type == .removed) {
+                    print("Removed product: \(diff.document.data())")
+                }
+            }
+        }
+    }
+    
+    
+    //same as above with using publisher and not completion handler
+//    func addListenerForAllUserFavoriteProductsWithPublisher(userId: String) -> AnyPublisher<[UserFavoriteProduct], Error> {
+//        let publisher = PassthroughSubject<[UserFavoriteProduct], Error>()
+//
+//
+//
+//        self.userFavoriteProductsListener =   userFavoriteProductCollection(userId: userId).addSnapshotListener { querySnapshot, error in
+//            guard let documents = querySnapshot?.documents else {
+//                print("No documents")
+//                return
+//            }
+//
+//            let products: [UserFavoriteProduct] = documents.compactMap({ try? $0.data(as: UserFavoriteProduct.self)})
+//
+//            //completion(products)
+//            publisher.send(products)
+//
+//
+//        }
+//        return publisher.eraseToAnyPublisher()
+//    }
+    
+    func addListenerForAllUserFavoriteProductsWithPublisher(userId: String) -> AnyPublisher<[UserFavoriteProduct], Error> {
+        let(publisher, listener) = userFavoriteProductCollection(userId: userId)
+            .addSnapshotListener(as: UserFavoriteProduct.self)
+        
+        self.userFavoriteProductsListener = listener
+        return publisher
+    }
+    
+    
+}
+
+
+
+struct UserFavoriteProduct: Codable {
+    let id: String
+    let productId: Int
+    let dateCreated: Date
+    
+    
+    enum CodingKeys: String, CodingKey {
+        case id = "id"
+        case productId = "product_id"
+        case dateCreated = "date_created"
+    }
+    
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.id, forKey: .id)
+        try container.encode(self.productId, forKey: .productId)
+        try container.encode(self.dateCreated, forKey: .dateCreated)
+    }
+    
+
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.productId = try container.decode(Int.self, forKey: .productId)
+        self.dateCreated = try container.decode(Date.self, forKey: .dateCreated)
+    }
 }
