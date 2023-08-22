@@ -2,39 +2,24 @@
 //  RootView.swift
 //  SwiftfulFirebaseBootcamp
 //
-//  Created by gs on 26/07/2023.
+//  Created by Nick Sarno on 1/21/23.
 //
 
 import SwiftUI
 
 struct RootView: View {
-
+    
     @State private var showSignInView: Bool = false
-
+    
     var body: some View {
         ZStack {
-            
             if !showSignInView {
-                
                 TabbarView(showSignInView: $showSignInView)
-                
-                /*
-                NavigationStack {
-                    //SettingsView(showSignInView: $showSignInView)
-                    //ProfileView(showSignInView: $showSignInView)
-                    ProductsView()
-                }
-                 */
             }
-            
-
         }
         .onAppear {
-            print("onAppear in RootView")
             let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
             self.showSignInView = authUser == nil
-            
-           // try? AuthenticationManager.shared.getProvider()
         }
         .fullScreenCover(isPresented: $showSignInView) {
             NavigationStack {

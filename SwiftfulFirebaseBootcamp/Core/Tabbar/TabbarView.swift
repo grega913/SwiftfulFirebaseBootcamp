@@ -1,10 +1,3 @@
-//
-//  TabbarView.swift
-//  SwiftfulFirebaseBootcamp
-//
-//  Created by gs on 21/08/2023.
-//
-
 import SwiftUI
 
 struct TabbarView: View {
@@ -13,14 +6,13 @@ struct TabbarView: View {
     
     var body: some View {
         TabView {
-            
             NavigationStack {
                 ProductsView()
             }
             .tabItem {
-                    Image(systemName: "cart")
-                    Text("Products")
-                }
+                Image(systemName: "cart")
+                Text("Products")
+            }
             
             NavigationStack {
                 FavoriteView()
@@ -37,9 +29,7 @@ struct TabbarView: View {
                 Image(systemName: "person")
                 Text("Profile")
             }
-           
         }
-        
     }
 }
 
